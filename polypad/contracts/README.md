@@ -44,18 +44,19 @@ Optional: `TOKEN_IMAGE`, `TOKEN_DESCRIPTION`, `PAYOUT_WALLET`, `LAUNCH_DELAY` (s
 ### 3. Buy / sell / graduate
 
 ```bash
+# SALE_ADDR = the launch clone address for your token (from the factory)
 # buy with 0.1 ETH (minTokensOut = 0 for the demo; use a real quote from quoteBuy() in production)
-cast send $LAUNCH "buy(uint256)" 0 --value 0.1ether --rpc-url arbitrum_sepolia --private-key $PK
+cast send $SALE_ADDR "buy(uint256)" 0 --value 0.1ether --rpc-url arbitrum_sepolia --private-key $PK
 
 # sell: approve then sell
-cast send $TOKEN "approve(address,uint256)" $LAUNCH $AMOUNT --rpc-url arbitrum_sepolia --private-key $PK
-cast send $LAUNCH "sell(uint256,uint256)" $AMOUNT 0 --rpc-url arbitrum_sepolia --private-key $PK
+cast send $TOKEN "approve(address,uint256)" $SALE_ADDR $AMOUNT --rpc-url arbitrum_sepolia --private-key $PK
+cast send $SALE_ADDR "sell(uint256,uint256)" $AMOUNT 0 --rpc-url arbitrum_sepolia --private-key $PK
 
 # graduation happens automatically inside the buy that reaches the threshold (default 15 ETH raised)
-cast call $LAUNCH "graduated()(bool)" --rpc-url arbitrum_sepolia
+cast call $SALE_ADDR "graduated()(bool)" --rpc-url arbitrum_sepolia
 
 # creator fees (anyone can trigger; always paid to the payout wallet)
-cast send $LAUNCH "claimCreatorFees()" --rpc-url arbitrum_sepolia --private-key $PK
+cast send $SALE_ADDR "claimCreatorFees()" --rpc-url arbitrum_sepolia --private-key $PK
 ```
 
 ## Architecture summary
