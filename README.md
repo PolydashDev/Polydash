@@ -34,8 +34,8 @@
 
 | Contract | Address | Source |
 | --- | --- | --- |
-| StakingFactory v1 | [`0x0aAEa47d2e7303EC5a809062eafa59e7F011D857`](https://robinhoodchain.blockscout.com/address/0x0aAEa47d2e7303EC5a809062eafa59e7F011D857) | In this repo: [`src/`](src) |
-| StakingFactory v2 | [`0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0) | Deployed Oct 8 2026, 3 pools. Source to be added. |
+| StakingFactory v1 | [`0x0aAEa47d2e7303EC5a809062eafa59e7F011D857`](https://robinhoodchain.blockscout.com/address/0x0aAEa47d2e7303EC5a809062eafa59e7F011D857) | In this repo: [`src/`](src). Not yet verified on the explorer (see note below). |
+| StakingFactory v2 | [`0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0) | ✅ **Verified** (exact match, `PolydashStakingFactoryV2` + `PolydashStakingPoolV2`, solc 0.8.24): [Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract) · [Sourcify](https://repo.sourcify.dev/4663/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0). Deployed Oct 8 2026, 3 pools. Pools are clones of the verified `PolydashStakingPoolV2` source but are not individually verified yet. |
 | $POLYDASH token | [`0x319525528f42167eF7fC18b77b889958080568e4`](https://robinhoodchain.blockscout.com/address/0x319525528f42167eF7fC18b77b889958080568e4) | Deployed via Clanker, not in this repo. LP locked. |
 
 Compiler settings: `solc 0.8.24`, optimizer 200 runs, `via_ir = true`, EVM `paris`.

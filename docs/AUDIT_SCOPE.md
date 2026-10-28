@@ -14,7 +14,7 @@ Commit: _tag at audit kickoff_ · Compiler: solc 0.8.24, optimizer 200, via-IR, 
 
 Deployed instance: StakingFactory v1 `0x0aAEa47d2e7303EC5a809062eafa59e7F011D857` (Robinhood Chain).
 
-**Pending:** StakingFactory v2 `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`. v2 source to be added; scope will be updated.
+**In scope (verified on-chain):** StakingFactory v2 `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`: `PolydashStakingFactoryV2.sol` and `PolydashStakingPoolV2.sol`, verified (exact match, solc 0.8.24, optimizer 200, via-IR) at [Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract). Source not yet mirrored in `src/`.
 
 ## Out of scope
 

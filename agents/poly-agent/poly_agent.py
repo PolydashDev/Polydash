@@ -52,21 +52,36 @@ def _fn(name: str, outputs: str = "uint256", inputs: Optional[List[str]] = None)
     }
 
 
+# Names below match the verified sources: PolydashStakingFactoryV2 / PolydashStakingPoolV2
+# (Sourcify exact match, solc 0.8.24, chain 4663). v1 shares the same getter names.
 FACTORY_ABI = [_fn("poolsLength"), _fn("allPools", "address", ["uint256"])]
+FACTORY_V2_ABI = FACTORY_ABI + [_fn("verified", "bool", ["address"])]
 POOL_ABI = [
     _fn("name", "string"), _fn("stakeToken", "address"), _fn("rewardToken", "address"),
     _fn("totalStaked"), _fn("rewardRate"), _fn("startTime"), _fn("endTime"),
     _fn("totalRewards"), _fn("totalRewardsPaid"), _fn("stakerCount"),
     _fn("maxTotalStake"), _fn("isActive", "bool"), _fn("funded", "bool"),
 ]
+# v2-only getters (verified PolydashStakingPoolV2). totalStaked is in *shares*
+# (1:1 with tokens while solvent); principalBacking() is the token amount backing them.
+POOL_V2_ABI = POOL_ABI + [_fn("principalBacking"), _fn("description", "string"), _fn("claimFeeBps")]
+RATE_PRECISION_V2 = 10 ** 18  # PolydashStakingPoolV2.RATE: rewardRate = tokens/sec * 1e18
 ERC20_ABI = [_fn("symbol", "string"), _fn("decimals", "uint8")]
 
-# Event topics (Staked/Withdrawn signatures differ between v1 and v2).
+def _topic(sig: str) -> str:
+    return "0x" + Web3.keccak(text=sig).hex().removeprefix("0x")
+
+
+# Event topics -> (flow type, index of the token-amount word in log data).
+# v1: Staked(user, amount), Withdrawn(user, amount, fee)
+# v2 (verified): Staked(user, amount, shares), Withdrawn(user, shares, amount),
+#                EmergencyWithdrawn(user, shares, amount)
 TOPICS = {
-    "v1": {"stake": "0x" + Web3.keccak(text="Staked(address,uint256)").hex().removeprefix("0x"),
-           "withdraw": "0x" + Web3.keccak(text="Withdrawn(address,uint256,uint256)").hex().removeprefix("0x")},
-    "v2": {"stake": "0x" + Web3.keccak(text="Staked(address,uint256,uint256)").hex().removeprefix("0x"),
-           "withdraw": "0x" + Web3.keccak(text="Withdrawn(address,uint256,uint256)").hex().removeprefix("0x")},
+    "v1": {_topic("Staked(address,uint256)"): ("stake", 0),
+           _topic("Withdrawn(address,uint256,uint256)"): ("withdraw", 0)},
+    "v2": {_topic("Staked(address,uint256,uint256)"): ("stake", 0),
+           _topic("Withdrawn(address,uint256,uint256)"): ("withdraw", 1),
+           _topic("EmergencyWithdrawn(address,uint256,uint256)"): ("withdraw", 1)},
 }
 
 w3 = Web3(Web3.HTTPProvider(RPC_URL, request_kwargs={"timeout": 30}))
@@ -137,21 +152,33 @@ def list_pools() -> str:
 def _stats(pool: str) -> Dict[str, Any]:
     pool = pool.lower()
     ver = _discover().get(pool, "v2")
-    c = w3.eth.contract(address=Web3.to_checksum_address(pool), abi=POOL_ABI)
+    c = w3.eth.contract(address=Web3.to_checksum_address(pool), abi=POOL_V2_ABI if ver == "v2" else POOL_ABI)
     st, rt = _token(_safe(c, "stakeToken")), _token(_safe(c, "rewardToken"))
     sd, rd = 10 ** st["decimals"], 10 ** rt["decimals"]
     total_staked = (_safe(c, "totalStaked") or 0) / sd
     start, end = _safe(c, "startTime") or 0, _safe(c, "endTime") or 0
     total_rewards = (_safe(c, "totalRewards") or 0) / rd
     raw_rate = _safe(c, "rewardRate") or 0
-    # rewardRate may be stored scaled by 1e18 (precision). Infer the scale by
-    # comparing rate*duration with totalRewards.
-    duration = max(end - start, 1)
-    rate = raw_rate / rd
-    if total_rewards and rate * duration > total_rewards * 1e6:
-        rate = raw_rate / rd / 1e18
+    if ver == "v2":
+        rate = raw_rate / RATE_PRECISION_V2 / rd  # verified: tokens/sec * 1e18
+    else:
+        # v1 is unverified: infer whether rewardRate is 1e18-scaled.
+        duration = max(end - start, 1)
+        rate = raw_rate / rd
+        if total_rewards and rate * duration > total_rewards * 1e6:
+            rate = raw_rate / rd / 1e18
     now = int(time.time())
-    return {
+    extra: Dict[str, Any] = {}
+    if ver == "v2":
+        pb = _safe(c, "principalBacking")
+        extra = {"principal_backing": pb / sd if pb is not None else None,
+                 "claim_fee_bps": _safe(c, "claimFeeBps")}
+        try:
+            fac = w3.eth.contract(address=Web3.to_checksum_address(FACTORIES["v2"]), abi=FACTORY_V2_ABI)
+            extra["factory_verified_badge"] = fac.functions.verified(Web3.to_checksum_address(pool)).call()
+        except Exception:
+            extra["factory_verified_badge"] = None
+    return {**extra,
         "pool": pool, "version": ver, "name": _safe(c, "name"),
         "stake_token": st, "reward_token": rt,
         "total_staked": total_staked,
@@ -218,7 +245,7 @@ def _flows(pool: str = "all", lookback_blocks: int = 50000) -> List[Dict[str, An
     for p in targets:
         ver = pools.get(p, "v2")
         st = _token(w3.eth.contract(address=Web3.to_checksum_address(p), abi=POOL_ABI).functions.stakeToken().call())
-        topic_map = {TOPICS[ver]["stake"]: "stake", TOPICS[ver]["withdraw"]: "withdraw"}
+        topic_map = TOPICS[ver]
         frm = start
         while frm <= latest:
             to = min(frm + LOG_CHUNK - 1, latest)
@@ -226,8 +253,9 @@ def _flows(pool: str = "all", lookback_blocks: int = 50000) -> List[Dict[str, An
                                     "toBlock": to, "topics": [list(topic_map)]})
             for lg in logs:
                 data = _hex(lg["data"])
-                amount = int(data[2:66], 16) / 10 ** st["decimals"]
-                events.append({"pool": p, "type": topic_map[_hex(lg["topics"][0])],
+                kind, word = topic_map[_hex(lg["topics"][0])]
+                amount = int(data[2 + 64 * word: 66 + 64 * word], 16) / 10 ** st["decimals"]
+                events.append({"pool": p, "type": kind,
                                "user": "0x" + _hex(lg["topics"][1])[-40:], "amount": amount,
                                "token": st["symbol"], "block": lg["blockNumber"],
                                "tx": _hex(lg["transactionHash"])})

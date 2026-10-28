@@ -31,8 +31,8 @@ report of each issue. Severity and reward amounts are decided by the Polydash te
 
 Contracts on Robinhood Chain:
 
-- Staking factory v2: `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`
-- Staking factory v1: `0x0aAEa47d2e7303EC5a809062eafa59e7F011D857`
+- Staking factory v2: `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0` (verified source, `PolydashStakingFactoryV2` / `PolydashStakingPoolV2`: [explorer](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract))
+- Staking factory v1: `0x0aAEa47d2e7303EC5a809062eafa59e7F011D857` (source in [`src/`](src); [explorer](https://robinhoodchain.blockscout.com/address/0x0aAEa47d2e7303EC5a809062eafa59e7F011D857))
 - Staking pools created by these factories
 
 See [docs/AUDIT_SCOPE.md](docs/AUDIT_SCOPE.md) for details.
