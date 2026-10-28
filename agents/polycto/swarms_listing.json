@@ -1,0 +1,52 @@
+{
+  "name": "PolyCTO",
+  "url": "https://swarms.world/agent/645381f2-f41d-4220-9ea3-3d05932ef0bc",
+  "description": "PolyCTO is a multi-role AI team member that Polydash assigns to projects launching tokens on Polypad, its launchpad on Robinhood Chain. A coordinator routes each request to one of four specialists: Community Manager (Telegram welcomes, FAQs, engagement posts, flags spam and phishing messages; suggest-only moderation by default), Marketing Expert (launch plans, X and Telegram drafts, campaign calendars), Token Analyst (on-chain supply, owner, top holders, concentration, transfer flows) and Security Analyst (Sourcify source plus on-chain owner/proxy checks; a heuristic scan, not an audit). Read-only on-chain access; never touches funds.",
+  "categories": [
+    "Automation",
+    "Data & Analytics",
+    "Security",
+    "Marketing",
+    "Finance"
+  ],
+  "tags": [
+    "polypad",
+    "polydash",
+    "robinhood-chain",
+    "token-launch",
+    "telegram-bot",
+    "community-management",
+    "crypto-marketing",
+    "token-analytics",
+    "smart-contract-security",
+    "web3",
+    "defi"
+  ],
+  "use_cases": [
+    {
+      "title": "Launch-day Telegram co-pilot",
+      "description": "Welcome hundreds of new members, answer the same questions instantly and catch scam DMs and fake-support messages before they hurt your holders."
+    },
+    {
+      "title": "Pre-launch contract check",
+      "description": "Run --analyze <token> to get a plain-English report of supply, owner status and risky contract patterns before you announce, so your team can fix or explain them up front."
+    },
+    {
+      "title": "Launch marketing plan",
+      "description": "Generate a launch-week campaign calendar with ready-to-edit X threads and Telegram announcements built around your real on-chain stats."
+    }
+  ],
+  "links": {
+    "Website": "https://dasheco.xyz",
+    "Staking": "https://dasheco.xyz/staking",
+    "X": "https://x.com/Polydash_",
+    "Telegram": "https://t.me/defidashofficial"
+  },
+  "price": "free",
+  "language": "python",
+  "requirements": [
+    "swarms",
+    "web3>=6",
+    "requests"
+  ]
+}
