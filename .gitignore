@@ -1,0 +1,22 @@
+# Foundry
+out/
+cache/
+broadcast/*/31337/
+broadcast/**/dry-run/
+lcov.info
+coverage/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+keystore/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+__pycache__/
