@@ -6,7 +6,7 @@ Network: **Robinhood Chain** (chain ID 4663) · RPC `https://rpc.mainnet.chain.r
 
 **Status:** Not yet externally audited.
 
-> Solidity source will be added in a follow-up; contracts are not yet source-verified.
+> Contracts are not yet source-verified on a block explorer.
 
 ## How it works
 
@@ -37,7 +37,35 @@ Each deployed address above was checked with `eth_getCode` on the Robinhood Chai
 
 `solc 0.8.26`, optimizer enabled (200 runs), `via_ir = true`, EVM `cancun`, `bytecode_hash = none`.
 
+## Layout
+
+- [`contracts/`](contracts): Foundry project (`src/`, `test/`, `script/`, `docs/`, `abis/`).
+- [`web/`](web): Next.js frontend for the launchpad.
+- [`deployments.json`](deployments.json) and [`abi/`](abi): deployed addresses and ABIs.
+
+## Build and test
+
+```sh
+cd polypad/contracts
+./install-deps.sh   # installs forge-std, OpenZeppelin, Uniswap v4-core and v4-periphery into lib/ (pinned in foundry.lock)
+forge build
+forge test
+```
+
+Frontend: `cd polypad/web && cp .env.example .env && yarn install && yarn dev`.
+
+## Docs
+
+- [Architecture](contracts/docs/ARCHITECTURE.md)
+- [Owner capabilities](contracts/docs/OWNER_CAPABILITIES.md)
+- [Creator fee safety](contracts/docs/CREATOR_FEE_SAFETY.md)
+- [Slither report](contracts/SLITHER_REPORT.md): static analysis output, not an audit.
+
 ## Files
 
 - [`deployments.json`](deployments.json): full manifest (addresses, deploy txs, constructor args, compiler settings, ABIs).
 - [`abi/`](abi): one ABI file per contract.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
