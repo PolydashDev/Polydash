@@ -65,6 +65,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/AUDIT_SCOPE.md](docs/
 | **Polypredict** | Prediction markets inside Telegram. |
 | **Polytrade** | AI-assisted trading. |
 | **Staking-as-a-Service** | Permissionless, automated staking pools for any ERC-20. **This repository.** |
+| **Poly Agent** | AI staking analyst for Polypad pools: live APRs and inflow/outflow alerts. Code in [agents/poly-agent](agents/poly-agent). [Live on the Swarms marketplace](https://swarms.world/agent/fbd6fcd5-8187-4bc7-98b2-59c9fc93a271). |
 
 ## Repository layout
 
@@ -72,6 +73,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/AUDIT_SCOPE.md](docs/
 ├── src/                     # Production contracts (v1; runtime code matches deployment)
 ├── test/                    # Foundry unit + fuzz tests, mocks/
 ├── script/Deploy.s.sol      # Env-driven deployment script
+├── agents/poly-agent/       # Poly Agent (Swarms marketplace agent)
 ├── docs/                    # Architecture & audit scope
 ├── assets/                  # Logo and banner
 ├── lib/                     # openzeppelin-contracts v5.0.2, forge-std (submodules)

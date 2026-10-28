@@ -1,0 +1,14 @@
+{
+  "name": "Poly Agent",
+  "description": "Poly Agent monitors and manages staking pools on Polypad, the token launchpad in the Polydash ecosystem on Robinhood Chain. It tracks inflows and outflows across staking pools in real time and reports live APRs, pool sizes and staking activity.",
+  "categories": ["Finance", "Data & Analytics", "Automation"],
+  "tags": ["defi", "staking", "apr", "robinhood-chain", "polypad", "polydash", "onchain-data"],
+  "use_cases": [
+    {"title": "Pool flow alerts", "description": "Detects large deposits and withdrawals in Polypad staking pools as they happen."},
+    {"title": "Live APR lookup", "description": "Gives current APRs and total staked for every active pool."},
+    {"title": "Staking opportunities", "description": "Surfaces new and active pools on Polypad with their terms."}
+  ],
+  "links": {"website": "https://dasheco.xyz", "staking": "https://dasheco.xyz/staking", "x": "https://x.com/Polydash_", "telegram": "https://t.me/defidashofficial"},
+  "pricing": "free",
+  "listing_url": "https://swarms.world/agent/fbd6fcd5-8187-4bc7-98b2-59c9fc93a271"
+}
