@@ -1,0 +1,108 @@
+<p align="center">
+  <img src="assets/polydash_logo_256.png" alt="Polydash logo" width="128" height="128">
+</p>
+
+<h1 align="center">Polydash</h1>
+
+<p align="center">
+  Smart contracts for Polydash (formerly Defidash): permissionless staking pools on Robinhood Chain.
+</p>
+
+<p align="center">
+  <a href="https://github.com/PolydashDev/Polydash/actions/workflows/ci.yml"><img src="https://github.com/PolydashDev/Polydash/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT"></a>
+  <img src="https://img.shields.io/badge/Solidity-0.8.24-363636.svg" alt="Solidity 0.8.24">
+  <a href="https://getfoundry.sh"><img src="https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg" alt="Foundry"></a>
+</p>
+
+<p align="center">
+  <a href="https://dasheco.xyz">Website</a> ·
+  <a href="https://x.com/Polydash_">X @Polydash_</a> ·
+  <a href="https://t.me/defidashofficial">Telegram</a>
+</p>
+
+<p align="center"><img src="assets/polydash_banner_1360x430.png" alt="Polydash banner" width="100%"></p>
+
+## Staking contracts
+
+| Contract | Path | Description |
+| --- | --- | --- |
+| **PolydashStakingFactory** | [`src/PolydashStakingFactory.sol`](src/PolydashStakingFactory.sol) | Anyone can deploy a reward pool for any ERC-20 by depositing the rewards up front. The owner can only set the fee recipient, the unstake fee for *future* pools (hard-capped at 5%) and a "verified" badge. The owner can never touch pool funds. |
+| **PolydashStakingPool** | [`src/PolydashStakingPool.sol`](src/PolydashStakingPool.sol) | One pool per campaign. Rewards stream linearly from `startTime` to `endTime`, shared pro-rata (Synthetix StakingRewards model). Stake / withdraw / claim / exit / emergencyWithdraw; the creator recovers unallocated rewards after the end. Fee-on-transfer tokens are credited by amount received. |
+
+## Deployments: Robinhood Chain (chain ID 4663)
+
+| Contract | Address | Source |
+| --- | --- | --- |
+| StakingFactory v1 | [`0x0aAEa47d2e7303EC5a809062eafa59e7F011D857`](https://robinhoodchain.blockscout.com/address/0x0aAEa47d2e7303EC5a809062eafa59e7F011D857) | In this repo: [`src/`](src) |
+| StakingFactory v2 | [`0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0) | Deployed Oct 8 2026, 3 pools. Source to be added. |
+| $POLYDASH token | [`0x319525528f42167eF7fC18b77b889958080568e4`](https://robinhoodchain.blockscout.com/address/0x319525528f42167eF7fC18b77b889958080568e4) | Deployed via Clanker, not in this repo. LP locked. |
+
+Compiler settings: `solc 0.8.24`, optimizer 200 runs, `via_ir = true`, EVM `paris`.
+
+The v1 runtime bytecode built from `src/` is identical to the deployed factory except for the trailing CBOR metadata hash (source paths moved from `contracts/` to `src/`). For explorer verification, submit the sources under their original `contracts/` paths.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Creator -- "createPool(rewards)" --> F[PolydashStakingFactory]
+    F -- "deploys + funds" --> P1[PolydashStakingPool]
+    F -- "deploys + funds" --> P2[PolydashStakingPool ...]
+    Staker -- "stake / withdraw / claim / exit" --> P1
+    P1 -- "unstake fee (max 5%)" --> T[(Fee recipient)]
+    P1 -- "unallocated rewards after end" --> Creator
+    Owner -. "fee recipient · future fee · verified badge" .-> F
+```
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/AUDIT_SCOPE.md](docs/AUDIT_SCOPE.md).
+
+## The Polydash ecosystem
+
+| Product | What it does |
+| --- | --- |
+| **Polypad** | Token launchpad on Base and Robinhood Chain. Projects go through [@bevourAI](https://x.com/bevourAI) pre-launch checks and must have a doxxed lead. Includes automated staking and AI agents built on the [@swarmsAI](https://x.com/swarmsAI) stack. |
+| **Polypredict** | Prediction markets inside Telegram. |
+| **Polytrade** | AI-assisted trading. |
+| **Staking-as-a-Service** | Permissionless, automated staking pools for any ERC-20. **This repository.** |
+
+## Repository layout
+
+```
+├── src/                     # Production contracts (v1; runtime code matches deployment)
+├── test/                    # Foundry unit + fuzz tests, mocks/
+├── script/Deploy.s.sol      # Env-driven deployment script
+├── docs/                    # Architecture & audit scope
+├── assets/                  # Logo and banner
+├── lib/                     # openzeppelin-contracts v5.0.2, forge-std (submodules)
+└── .github/                 # CI, issue & PR templates
+```
+
+## Quickstart
+
+```bash
+git clone --recursive https://github.com/PolydashDev/Polydash.git
+cd Polydash
+forge build
+forge test
+forge coverage --ir-minimum --no-match-coverage "test|script"
+```
+
+### Deploy
+
+```bash
+cp .env.example .env   # fill in locally, never commit
+source .env
+forge script script/Deploy.s.sol --rpc-url robinhood --broadcast
+```
+
+Prefer a hardware wallet or encrypted keystore (`--account`) over a raw `PRIVATE_KEY` for mainnet.
+
+## Security
+
+Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
+Staking involves smart-contract risk. Nothing in this repository is financial advice or a promise of returns.
+
+## License
+
+[MIT](LICENSE) © 2026 Polydash
