@@ -54,4 +54,4 @@ Neither contract is upgradeable or uses proxies.
 ## v2
 
 StakingFactory v2 (`0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`, deployed Oct 8 2026, 3 pools) runs newer code.
-**v2 source to be added** once published; this document describes v1 only.
+Its source is **verified** ([Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract)): `PolydashStakingFactoryV2` + `PolydashStakingPoolV2`. Notable v2 differences: share-based accounting (`totalStaked` is shares, `principalBacking()` is tokens), a claim fee (`claimFeeBps`) instead of an unstake fee, `Withdrawn(user, shares, amount)`, `EmergencyWithdrawn`, and `getPoolInfo` / `getPoolAddresses` helpers. This document otherwise describes v1.
