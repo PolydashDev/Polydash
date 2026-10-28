@@ -1,0 +1,15 @@
+# web
+web/node_modules/
+web/.next/
+web/.yarn/
+web/.env
+web/*.tsbuildinfo
+
+# contracts
+contracts/lib/
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/.env
+
+.DS_Store

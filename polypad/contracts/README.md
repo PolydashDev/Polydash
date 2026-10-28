@@ -1,0 +1,159 @@
+# Polydash Launchpad
+
+Fair-launch token launchpad for **Robinhood Chain** (Arbitrum Orbit L2, chain id `4663`).
+Tokens trade on a constant-product bonding curve, then graduate **atomically** into a Uniswap V4 pool whose liquidity is
+**locked forever** by the Polydash hook. Creators earn a fee (0–2%) on every trade — before and after graduation —
+that only they can ever receive.
+
+> ⚠️ **Status: testnet only.** Not audited. Mainnet deployment is hard-blocked in `script/Deploy.s.sol` and requires a
+> completed external audit **and** written approval.
+
+## Quick start
+
+Requirements: [Foundry](https://book.getfoundry.sh/) (`forge`, `cast`, `anvil`).
+
+```bash
+git submodule update --init --recursive
+forge build
+forge test
+```
+
+### 1. Deploy on Arbitrum Sepolia (421614)
+
+```bash
+export ARBITRUM_SEPOLIA_RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+export PLATFORM_FEE_WALLET=0xYourFeeWallet
+export FINAL_OWNER=0xYourMultisig          # optional: 2-step ownership transfer is started
+forge script script/Deploy.s.sol --rpc-url arbitrum_sepolia --broadcast --private-key $PK
+```
+
+Deploys the `PolydashLaunch` implementation, `PolydashFactory`, and `PolydashHook` (CREATE2 address mined so its
+low bits encode the V4 hook permissions), then calls `factory.setHook(hook)`. Set `BUYBACK_WETH` +
+`BUYBACK_V3_POOL` to also deploy the (disabled) `BuybackRouter`.
+
+### 2. Create a launch
+
+```bash
+FACTORY=0x... TOKEN_NAME="My Token" TOKEN_SYMBOL=MYT CREATOR_FEE_BPS=100 DEV_BUY_WEI=10000000000000000 \
+forge script script/CreateLaunch.s.sol --rpc-url arbitrum_sepolia --broadcast --private-key $PK
+```
+
+Optional: `TOKEN_IMAGE`, `TOKEN_DESCRIPTION`, `PAYOUT_WALLET`, `LAUNCH_DELAY` (seconds of pre-launch commitments),
+`SOCIAL_X`, `SOCIAL_TELEGRAM`, `SOCIAL_WEBSITE`.
+
+### 3. Buy / sell / graduate
+
+```bash
+# SALE_ADDR = the launch clone address for your token (from the factory)
+# buy with 0.1 ETH (minTokensOut = 0 for the demo; use a real quote from quoteBuy() in production)
+cast send $SALE_ADDR "buy(uint256)" 0 --value 0.1ether --rpc-url arbitrum_sepolia --private-key $PK
+
+# sell: approve then sell
+cast send $TOKEN "approve(address,uint256)" $SALE_ADDR $AMOUNT --rpc-url arbitrum_sepolia --private-key $PK
+cast send $SALE_ADDR "sell(uint256,uint256)" $AMOUNT 0 --rpc-url arbitrum_sepolia --private-key $PK
+
+# graduation happens automatically inside the buy that reaches the threshold (default 15 ETH raised)
+cast call $SALE_ADDR "graduated()(bool)" --rpc-url arbitrum_sepolia
+
+# creator fees (anyone can trigger; always paid to the payout wallet)
+cast send $SALE_ADDR "claimCreatorFees()" --rpc-url arbitrum_sepolia --private-key $PK
+```
+
+## Architecture summary
+
+| Contract | Purpose |
+|---|---|
+| `PolydashFactory` | Creates launches (EIP-1167 clones + new token), global config for future launches, routes platform fees. Ownable2Step. |
+| `PolydashLaunch` | Per-token bonding curve: commitments → dev buy → trading → atomic graduation. |
+| `PolydashToken` | Fixed-supply ERC-20, no owner/mint/pause/tax. |
+| `PolydashHook` | Uniswap V4 hook: creates the pool, owns the LP forever, charges fees in ETH on every swap. |
+| `PolydashCommitVault` | Pooled pre-launch commitments: deposit/withdraw while Pending, then everyone settles at the same average price and claims tokens + refunds pro-rata. No owner, no fee, no admin functions. |
+| `BuybackRouter` | Optional: platform-fee share → $POLYDASH (V3, TWAP-protected) → Trading Rewards pool. Off by default. |
+
+Key numbers: 1B default supply, 80% on the curve / 20% LP reserve, 1.5 ETH virtual reserve, graduation at 15 ETH raised
+(or a market-cap target), **platform fee 0.2% hard-coded**, creator fee 0–2% fixed per launch.
+
+### Fee flow
+
+```
+ Trader ──ETH──► PolydashLaunch (curve)              Trader ──ETH──► Uniswap V4 pool ──► PolydashHook
+                 │ 0.20% platform                                                      │ 0.20% platform
+                 │ 0–2%  creator                                                       │ 0–2%  creator
+                 │ anti-sniper surplus ──► locked LP at graduation                     │ sell spike (opt.) ──► locked LP
+                 │                                                                     │
+   creator ◄─────┤ claimCreatorFees() ─────────────────────── creator ◄────────────────┤ (same claim call)
+                 │                                                                     │
+                 └─ platform ──► PolydashFactory.collectPlatformFees() ◄───────────────┘
+                                    │
+                     ┌──────────────┴──────────────┐
+                     ▼ (100 − b)%                  ▼ b% (optional, default 0)
+              platform fee wallet          BuybackRouter ─► $POLYDASH ─► Trading Rewards pool
+```
+
+Docs:
+* [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — design, curve math, V4 graduation, V3 trade-offs, future work
+* [`docs/CREATOR_FEE_SAFETY.md`](docs/CREATOR_FEE_SAFETY.md) — why creator fees are safe, incl. "Why a claim can't drain your wallet"
+* [`docs/OWNER_CAPABILITIES.md`](docs/OWNER_CAPABILITIES.md) — exactly what the owner can and cannot do
+* [`SLITHER_REPORT.md`](SLITHER_REPORT.md) — static-analysis findings, all triaged
+* [`abis/`](abis) — ABIs generated with `forge inspect <Contract> abi --json`
+
+## Addresses
+
+### Arbitrum Sepolia (421614)
+
+| Contract | Address |
+|---|---|
+| PolydashFactory | TBD — run `Deploy.s.sol` on Arbitrum Sepolia |
+| PolydashLaunch (impl) | TBD — run `Deploy.s.sol` on Arbitrum Sepolia |
+| PolydashHook | TBD — run `Deploy.s.sol` on Arbitrum Sepolia |
+| BuybackRouter | TBD (optional) |
+| Uniswap V4 PoolManager | `0xFB3e0C6F74eB1a21CC1Da29aeC80D2Dfe6C9a317` |
+
+### Robinhood Chain (4663) — **not deployed**
+
+| | Address |
+|---|---|
+| Uniswap V4 PoolManager | `0x8366a39CC670B4001A1121B8F6A443A643e40951` |
+| Uniswap V4 PositionManager | `0x58daec3116aae6D93017bAAea7749052E8a04fA7` |
+| $POLYDASH | `0x319525528f42167eF7fC18b77b889958080568e4` |
+| Staking V2 Factory (future integration) | `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0` |
+
+## Tests, coverage & gas
+
+```bash
+forge test                                  # 136 tests: unit, fuzz (1,000 runs), invariant (128 runs × depth 64)
+FORK_TESTS=true forge test --match-path "test/fork/*"   # Robinhood mainnet fork: real V4 PoolManager, nothing broadcast
+slither .                                   # 0 findings (see SLITHER_REPORT.md)
+forge coverage --ir-minimum --no-match-coverage "test|script"
+forge test --gas-report
+```
+
+* **136 / 136 tests passing** (12 suites: BondingCurve, Fees, CreatorFee, Commitments, CommitVault, AntiSniper,
+  Graduation, Reentrancy, BondingCurveFuzz, FeeFuzz, LaunchInvariant — 8 invariants, plus the opt-in Robinhood fork test).
+* **Coverage (src/):** 98.66% lines · 95.06% statements · 75.58% branches · 98.97% functions.
+  Uncovered branches are mostly defensive error paths and V4 callbacks that always revert.
+
+| Gas (from `forge test --gas-report`) | Avg | Max |
+|---|---|---|
+| `createLaunch` (clone + token + init) | 1,126,783 | 2,099,715 |
+| `buy` | 180,354 | 793,053 (buy that graduates into V4) |
+| `sell` | 73,952 | 104,545 |
+| `claimCreatorFees` | 19,900 | 82,691 |
+| `commit` | 87,133 | 137,675 |
+| `collectPlatformFees` (factory) | 63,194 | 320,404 |
+
+Local rehearsal: `Deploy.s.sol` + `CreateLaunch.s.sol` were run end-to-end on a local anvil node (chain id set to
+421614, `POOL_MANAGER` pointed at a locally deployed, unmodified Uniswap v4-core `PoolManager`); two launches were
+created and graduated. Nothing has been broadcast to the public Arbitrum Sepolia network yet.
+
+## What's left before mainnet
+
+1. **External security audit** of all contracts in `src/`, and fixes for any findings.
+2. Deploy and soak-test on Arbitrum Sepolia; fill in the testnet addresses above.
+3. Factory owner = multisig; accept ownership (`acceptOwnership`).
+4. Confirm Robinhood Chain Uniswap V4 routing / aggregator support for hooked pools.
+5. **Written approval** from the project owner — only then set `MAINNET=true I_HAVE_WRITTEN_APPROVAL_AND_AUDIT=true`.
+
+## License
+
+MIT
