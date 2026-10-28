@@ -61,7 +61,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/AUDIT_SCOPE.md](docs/
 
 | Product | What it does |
 | --- | --- |
-| **Polypad** | Token launchpad on Base and Robinhood Chain. Projects go through [@bevourAI](https://x.com/bevourAI) pre-launch checks and must have a doxxed lead. Includes automated staking and AI agents built on the [@swarmsAI](https://x.com/swarmsAI) stack. |
+| **Polypad** | Token launchpad on Base and Robinhood Chain. Projects go through [@bevourAI](https://x.com/bevourAI) pre-launch checks and must have a doxxed lead. Includes automated staking and AI agents built on the [@swarmsAI](https://x.com/swarmsAI) stack. Contract addresses and ABIs in [polypad](polypad). |
 | **Polypredict** | Prediction markets inside Telegram. |
 | **Polytrade** | AI-assisted trading. |
 | **Staking-as-a-Service** | Permissionless, automated staking pools for any ERC-20. **This repository.** |
@@ -74,6 +74,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/AUDIT_SCOPE.md](docs/
 ├── src/                     # Production contracts (v1; runtime code matches deployment)
 ├── test/                    # Foundry unit + fuzz tests, mocks/
 ├── script/Deploy.s.sol      # Env-driven deployment script
+├── polypad/                 # Polypad launchpad: deployments + ABIs (source to follow)
 ├── agents/poly-agent/       # Poly Agent (Swarms marketplace agent)
 ├── agents/polycto/          # PolyCTO (Swarms marketplace agent)
 ├── docs/                    # Architecture & audit scope
