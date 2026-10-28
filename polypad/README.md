@@ -6,7 +6,7 @@ Network: **Robinhood Chain** (chain ID 4663) · RPC `https://rpc.mainnet.chain.r
 
 **Status:** Not yet externally audited.
 
-> Contracts are not yet source-verified on a block explorer.
+> The 4 deployed contracts are verified on [Sourcify](https://sourcify.dev) (creation and runtime bytecode match; status "match" rather than "exact_match" because they were compiled with `bytecode_hash = none`, so there is no metadata hash to compare).
 
 ## How it works
 
@@ -16,14 +16,14 @@ Network: **Robinhood Chain** (chain ID 4663) · RPC `https://rpc.mainnet.chain.r
 
 ## Contracts
 
-| Contract | Address | Deploy tx | ABI | Notes |
-| --- | --- | --- | --- | --- |
-| **PolydashFactory** | [`0x2c84cfcd8d283ef750e09fbed735d67f67845db2`](https://robinhoodchain.blockscout.com/address/0x2c84cfcd8d283ef750e09fbed735d67f67845db2) | [`0x966d0bd8…`](https://robinhoodchain.blockscout.com/tx/0x966d0bd8be8e220d0f961b850d8ede49ac11ad9114669bf2e33ae3825f609ded) | [`abi/PolydashFactory.json`](abi/PolydashFactory.json) | Creates launches (clones of PolydashLaunch). |
-| **PolydashLaunch** | [`0xef7684268f13bc06cb02755642ceabef422b8b70`](https://robinhoodchain.blockscout.com/address/0xef7684268f13bc06cb02755642ceabef422b8b70) | [`0x60a54314…`](https://robinhoodchain.blockscout.com/tx/0x60a54314fdade940734d8e999bc9b846f82cf155ecb8d65197d79f50b5485ff0) | [`abi/PolydashLaunch.json`](abi/PolydashLaunch.json) | Launch implementation. Each launch is an EIP-1167 clone of this address. |
-| **PolydashHook** | [`0x04990e6671c98e1b43034e52366af11396d960cc`](https://robinhoodchain.blockscout.com/address/0x04990e6671c98e1b43034e52366af11396d960cc) | [`0xcfc039ca…`](https://robinhoodchain.blockscout.com/tx/0xcfc039ca3454373f97fc2e476ce643f20167527fd87c0679f61fc4d9ffa76fd8) | [`abi/PolydashHook.json`](abi/PolydashHook.json) | Uniswap V4 hook used after graduation. |
-| **PolydashCommitVault** | [`0x8f125c9ec7acd52b9cd39f2a7441085559d84104`](https://robinhoodchain.blockscout.com/address/0x8f125c9ec7acd52b9cd39f2a7441085559d84104) | [`0xdd691f09…`](https://robinhoodchain.blockscout.com/tx/0xdd691f0979329d68cef3c185fd912857e402df12e739574df2c7c44d2b53074f) | [`abi/PolydashCommitVault.json`](abi/PolydashCommitVault.json) | Holds commitments during the commitment window. |
-| **PolydashToken** | — | — | [`abi/PolydashToken.json`](abi/PolydashToken.json) | ERC-20 deployed per launch by the factory (no single address). |
-| **BuybackRouter** | — | — | [`abi/BuybackRouter.json`](abi/BuybackRouter.json) | Not deployed. |
+| Contract | Address | Deploy tx | ABI | Source | Notes |
+| --- | --- | --- | --- | --- | --- |
+| **PolydashFactory** | [`0x2c84cfcd8d283ef750e09fbed735d67f67845db2`](https://robinhoodchain.blockscout.com/address/0x2c84cfcd8d283ef750e09fbed735d67f67845db2) | [`0x966d0bd8…`](https://robinhoodchain.blockscout.com/tx/0x966d0bd8be8e220d0f961b850d8ede49ac11ad9114669bf2e33ae3825f609ded) | [`abi/PolydashFactory.json`](abi/PolydashFactory.json) | [Verified on Sourcify](https://repo.sourcify.dev/4663/0x2c84cfcd8d283ef750e09fbed735d67f67845db2) | Creates launches (clones of PolydashLaunch). |
+| **PolydashLaunch** | [`0xef7684268f13bc06cb02755642ceabef422b8b70`](https://robinhoodchain.blockscout.com/address/0xef7684268f13bc06cb02755642ceabef422b8b70) | [`0x60a54314…`](https://robinhoodchain.blockscout.com/tx/0x60a54314fdade940734d8e999bc9b846f82cf155ecb8d65197d79f50b5485ff0) | [`abi/PolydashLaunch.json`](abi/PolydashLaunch.json) | [Verified on Sourcify](https://repo.sourcify.dev/4663/0xef7684268f13bc06cb02755642ceabef422b8b70) | Launch implementation. Each launch is an EIP-1167 clone of this address. |
+| **PolydashHook** | [`0x04990e6671c98e1b43034e52366af11396d960cc`](https://robinhoodchain.blockscout.com/address/0x04990e6671c98e1b43034e52366af11396d960cc) | [`0xcfc039ca…`](https://robinhoodchain.blockscout.com/tx/0xcfc039ca3454373f97fc2e476ce643f20167527fd87c0679f61fc4d9ffa76fd8) | [`abi/PolydashHook.json`](abi/PolydashHook.json) | [Verified on Sourcify](https://repo.sourcify.dev/4663/0x04990e6671c98e1b43034e52366af11396d960cc) | Uniswap V4 hook used after graduation. |
+| **PolydashCommitVault** | [`0x8f125c9ec7acd52b9cd39f2a7441085559d84104`](https://robinhoodchain.blockscout.com/address/0x8f125c9ec7acd52b9cd39f2a7441085559d84104) | [`0xdd691f09…`](https://robinhoodchain.blockscout.com/tx/0xdd691f0979329d68cef3c185fd912857e402df12e739574df2c7c44d2b53074f) | [`abi/PolydashCommitVault.json`](abi/PolydashCommitVault.json) | [Verified on Sourcify](https://repo.sourcify.dev/4663/0x8f125c9ec7acd52b9cd39f2a7441085559d84104) | Holds commitments during the commitment window. |
+| **PolydashToken** | — | — | [`abi/PolydashToken.json`](abi/PolydashToken.json) | — | ERC-20 deployed per launch by the factory (no single address). |
+| **BuybackRouter** | — | — | [`abi/BuybackRouter.json`](abi/BuybackRouter.json) | — | Not deployed. |
 
 Each deployed address above was checked with `eth_getCode` on the Robinhood Chain RPC on 2026-10-28 and has contract code (Factory 13704 bytes, Launch 10649 bytes, Hook 10005 bytes, CommitVault 5357 bytes).
 
