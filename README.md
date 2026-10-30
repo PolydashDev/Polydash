@@ -5,7 +5,7 @@
 <h1 align="center">Polydash</h1>
 
 <p align="center">
-  Smart contracts for Polydash (formerly Defidash): permissionless staking pools on Robinhood Chain.
+  Open-source DeFi infrastructure on Robinhood Chain: permissionless staking pools, the Polypad launchpad and on-chain AI agents.
 </p>
 
 <p align="center">
@@ -17,6 +17,7 @@
 
 <p align="center">
   <a href="https://dasheco.xyz">Website</a> ·
+  <a href="https://polypad.abacusai.app">Polypad</a> ·
   <a href="https://x.com/Polydash_">X @Polydash_</a> ·
   <a href="https://t.me/defidashofficial">Telegram</a>
 </p>
@@ -35,7 +36,11 @@
 | Contract | Address | Source |
 | --- | --- | --- |
 | StakingFactory v1 | [`0x0aAEa47d2e7303EC5a809062eafa59e7F011D857`](https://robinhoodchain.blockscout.com/address/0x0aAEa47d2e7303EC5a809062eafa59e7F011D857) | In this repo: [`src/`](src). Not yet verified on the explorer (see note below). |
-| StakingFactory v2 | [`0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0) | ✅ **Verified** (exact match, `PolydashStakingFactoryV2` + `PolydashStakingPoolV2`, solc 0.8.24): [Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract) · [Sourcify](https://repo.sourcify.dev/4663/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0). Deployed Oct 8 2026, 3 pools. Pools are clones of the verified `PolydashStakingPoolV2` source but are not individually verified yet. |
+| StakingFactory v2 | [`0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0) | **Verified** (exact match, `PolydashStakingFactoryV2` + `PolydashStakingPoolV2`, solc 0.8.24): [Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract) · [Sourcify](https://repo.sourcify.dev/4663/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0). Deployed Oct 8 2026, 3 pools. Pools are clones of the verified `PolydashStakingPoolV2` source but are not individually verified yet. |
+| Polypad PolydashFactory | [`0x2c84cfcd8d283ef750e09fbed735d67f67845db2`](https://robinhoodchain.blockscout.com/address/0x2c84cfcd8d283ef750e09fbed735d67f67845db2) | Launch factory. Verified on [Sourcify](https://repo.sourcify.dev/4663/0x2c84cfcd8d283ef750e09fbed735d67f67845db2) (match). Source and ABIs in [`polypad/`](polypad). |
+| Polypad PolydashLaunch | [`0xef7684268f13bc06cb02755642ceabef422b8b70`](https://robinhoodchain.blockscout.com/address/0xef7684268f13bc06cb02755642ceabef422b8b70) | Launch implementation (EIP-1167 clones). Verified on [Sourcify](https://repo.sourcify.dev/4663/0xef7684268f13bc06cb02755642ceabef422b8b70) (match). Source and ABIs in [`polypad/`](polypad). |
+| Polypad PolydashHook | [`0x04990e6671c98e1b43034e52366af11396d960cc`](https://robinhoodchain.blockscout.com/address/0x04990e6671c98e1b43034e52366af11396d960cc) | Uniswap V4 hook used after graduation. Verified on [Sourcify](https://repo.sourcify.dev/4663/0x04990e6671c98e1b43034e52366af11396d960cc) (match). Source and ABIs in [`polypad/`](polypad). |
+| Polypad PolydashCommitVault | [`0x8f125c9ec7acd52b9cd39f2a7441085559d84104`](https://robinhoodchain.blockscout.com/address/0x8f125c9ec7acd52b9cd39f2a7441085559d84104) | Commitment-window vault. Verified on [Sourcify](https://repo.sourcify.dev/4663/0x8f125c9ec7acd52b9cd39f2a7441085559d84104) (match). Source and ABIs in [`polypad/`](polypad). |
 | $POLYDASH token | [`0x319525528f42167eF7fC18b77b889958080568e4`](https://robinhoodchain.blockscout.com/address/0x319525528f42167eF7fC18b77b889958080568e4) | Deployed via Clanker, not in this repo. LP locked. |
 
 Compiler settings: `solc 0.8.24`, optimizer 200 runs, `via_ir = true`, EVM `paris`.
@@ -74,7 +79,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/AUDIT_SCOPE.md](docs/
 ├── src/                     # Production contracts (v1; runtime code matches deployment)
 ├── test/                    # Foundry unit + fuzz tests, mocks/
 ├── script/Deploy.s.sol      # Env-driven deployment script
-├── polypad/                 # Polypad launchpad: deployments + ABIs (source to follow)
+├── polypad/                 # Polypad launchpad: contracts, ABIs, deployments, web app
 ├── agents/poly-agent/       # Poly Agent (Swarms marketplace agent)
 ├── agents/polycto/          # PolyCTO (Swarms marketplace agent)
 ├── docs/                    # Architecture & audit scope
@@ -107,6 +112,10 @@ Prefer a hardware wallet or encrypted keystore (`--account`) over a raw `PRIVATE
 
 Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
 Staking involves smart-contract risk. Nothing in this repository is financial advice or a promise of returns.
+
+## History
+
+Polydash was previously known as Defidash. The community Telegram keeps its original handle.
 
 ## License
 
