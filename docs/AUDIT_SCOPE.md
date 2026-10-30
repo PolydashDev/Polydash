@@ -14,7 +14,9 @@ Commit: _tag at audit kickoff_ · Compiler: solc 0.8.24, optimizer 200, via-IR, 
 
 Deployed instance: StakingFactory v1 `0x0aAEa47d2e7303EC5a809062eafa59e7F011D857` (Robinhood Chain).
 
-**In scope (verified on-chain):** StakingFactory v2 `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`: `PolydashStakingFactoryV2.sol` and `PolydashStakingPoolV2.sol`, verified (exact match, solc 0.8.24, optimizer 200, via-IR) at [Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract). Source not yet mirrored in `src/`.
+**In scope (verified on-chain):** StakingFactory v2 `0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0`: `PolydashStakingFactoryV2.sol` and `PolydashStakingPoolV2.sol`, verified (exact match, solc 0.8.24, optimizer 200, via-IR) at [Blockscout](https://robinhoodchain.blockscout.com/address/0x904b8F5d95B593b5F4a6Dbb116b58e1d5CBe93f0?tab=contract). Source mirrored byte-for-byte in [`src/v2/`](../src/v2) (provenance, compiler settings and bytecode check in [`src/v2/README.md`](../src/v2/README.md)); tests in [`test/v2/`](../test/v2).
+
+> **Legacy v1 factory.** StakingFactory v1 (`0x0aAEa47d2e7303EC5a809062eafa59e7F011D857`) is legacy. Its reward accumulator uses 1e18 precision, so a reward token with few decimals (for example 6-decimal USDC) streamed to a large 18-decimal stake supply can round to zero on every update and those rewards are lost. Do not create v1 pools with 6-decimal reward tokens. New pools should use StakingFactory v2.
 
 ## Out of scope
 
