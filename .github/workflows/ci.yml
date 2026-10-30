@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 env:
   FOUNDRY_PROFILE: ci
 
@@ -23,8 +26,21 @@ jobs:
         run: forge build --sizes
       - name: Test
         run: forge test -vvv
+      - name: Gas report
+        run: forge test --gas-report | tee gas-report.txt
+      - name: Gas snapshot
+        run: forge snapshot --snap .gas-snapshot
       - name: Coverage
-        run: forge coverage --ir-minimum --no-match-coverage "test|script" --report summary
+        run: |
+          forge coverage --ir-minimum --no-match-coverage "test|script" --report summary --report lcov | tee coverage-summary.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            lcov.info
+            coverage-summary.txt
+            gas-report.txt
+            .gas-snapshot
 
   slither:
     name: Slither (advisory)
@@ -35,6 +51,13 @@ jobs:
         with:
           submodules: recursive
       - uses: crytic/slither-action@v0.4.0
+        id: slither
         with:
           fail-on: none
           target: .
+          sarif: results.sarif
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: slither-sarif
+          path: results.sarif

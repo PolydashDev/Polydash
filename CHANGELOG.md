@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · [SemVer](https://semver.org/).
 
 ## [Unreleased]
+
+## [1.1.0] - 2026-10-29
+### Added
+- CI: gas snapshot, LCOV coverage artifact, Slither SARIF report; CODEOWNERS and Dependabot for GitHub Actions.
+- README: full Robinhood Chain deployments table (staking and Polypad), Polypad links.
 ### Added
 - Polypad launchpad contracts in `polypad/`: deployment manifest, ABIs for 6 contracts and a README with Robinhood Chain addresses. Not yet externally audited.
 - Polypad Solidity source (`polypad/contracts/`: Foundry project with src, tests, scripts, docs and Slither static-analysis report) and Next.js frontend (`polypad/web/`). Not yet externally audited.
