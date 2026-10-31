@@ -14,8 +14,8 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 library FeeMath {
     /// @notice Platform fee: 0.2% of trading volume. Hard-coded. There is no setter anywhere in the system.
     uint256 internal constant PLATFORM_FEE_BPS = 20;
-    /// @notice Hard upper bound on the creator fee (2%).
-    uint256 internal constant MAX_CREATOR_FEE_BPS = 200;
+    /// @notice Hard upper bound on the creator fee (5%). Applies on the curve and in the graduated pool.
+    uint256 internal constant MAX_CREATOR_FEE_BPS = 500;
     uint256 internal constant BPS = 10_000;
 
     struct Fees {

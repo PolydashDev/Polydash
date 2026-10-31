@@ -21,13 +21,14 @@
   "contracts": {
     "PolydashFactory": {
       "source": "src/PolydashFactory.sol",
-      "address": "0x2c84cfcd8d283ef750e09fbed735d67f67845db2",
-      "deployTx": "0x966d0bd8be8e220d0f961b850d8ede49ac11ad9114669bf2e33ae3825f609ded",
+      "address": "0xfDfD0A095966c8B56639f7eAa13f4B0188Fc08c2",
+      "deployTx": "0x9febcb0ced4fea460faeba948d911b7c03a41f02ccfdd7f31ba479c94b9d97b9",
       "constructorArguments": [
         "0x9a21c75aC263cC43125E70200636f6397f8776d0",
-        "0xEf7684268f13BC06CB02755642CeAbEf422b8B70",
+        "0x2e0026da8f2E151f63A4313aCD1a579172D9D2Ad",
         "0x9a21c75aC263cC43125E70200636f6397f8776d0"
       ],
+      "sourcify": "https://sourcify.dev/server/v2/contract/4663/0xfDfD0A095966c8B56639f7eAa13f4B0188Fc08c2",
       "abi": [
         {
           "type": "constructor",
@@ -1439,13 +1440,15 @@
           "name": "UnexpectedEth",
           "inputs": []
         }
-      ]
+      ],
+      "note": "Current factory used by polypad.family. Creator fee cap 500 bps (5%)."
     },
     "PolydashLaunch": {
       "source": "src/PolydashLaunch.sol",
-      "address": "0xef7684268f13bc06cb02755642ceabef422b8b70",
-      "deployTx": "0x60a54314fdade940734d8e999bc9b846f82cf155ecb8d65197d79f50b5485ff0",
+      "address": "0x2e0026da8f2E151f63A4313aCD1a579172D9D2Ad",
+      "deployTx": "0x36555c8fe7d668e5967c499d9200c35b81b3a932b551298f53d381218cda869e",
       "constructorArguments": [],
+      "sourcify": "https://sourcify.dev/server/v2/contract/4663/0x2e0026da8f2E151f63A4313aCD1a579172D9D2Ad",
       "abi": [
         {
           "type": "constructor",
@@ -3050,16 +3053,13 @@
           "inputs": []
         }
       ],
-      "note": "Implementation contract; each launch is an EIP-1167 clone of this address."
+      "note": "Launch implementation for the current factory (launchImplementation())."
     },
     "PolydashHook": {
       "source": "src/PolydashHook.sol",
-      "address": "0x04990e6671c98e1b43034e52366af11396d960cc",
-      "deployTx": "0xcfc039ca3454373f97fc2e476ce643f20167527fd87c0679f61fc4d9ffa76fd8",
-      "constructorArguments": [
-        "0x8366a39CC670B4001A1121B8F6A443A643e40951",
-        "0x2C84cFCD8d283EF750E09Fbed735d67F67845dB2"
-      ],
+      "address": "0x4d3066bBfF889023def912D2fDe36c44357fA0cC",
+      "deployTx": "0xd8b340b8576d94035afa337965754f726e1699b3a9657d2672c40b52e5470e0a",
+      "sourcify": "https://sourcify.dev/server/v2/contract/4663/0x4d3066bBfF889023def912D2fDe36c44357fA0cC",
       "abi": [
         {
           "type": "constructor",
@@ -4459,7 +4459,8 @@
           "name": "UnknownPool",
           "inputs": []
         }
-      ]
+      ],
+      "note": "Uniswap V4 hook for the current factory (hook()). Constructor: poolManager, factory."
     },
     "PolydashCommitVault": {
       "source": "src/PolydashCommitVault.sol",
@@ -4945,7 +4946,8 @@
             }
           ]
         }
-      ]
+      ],
+      "note": "Deployed with the legacy factory as constructor argument; not referenced by the current factory."
     },
     "PolydashToken": {
       "source": "src/PolydashToken.sol",
@@ -5875,6 +5877,44 @@
         }
       ],
       "note": "Not deployed."
+    }
+  },
+  "legacyContracts": {
+    "PolydashFactory": {
+      "source": "src/PolydashFactory.sol",
+      "address": "0x2c84cfcd8d283ef750e09fbed735d67f67845db2",
+      "deployTx": "0x966d0bd8be8e220d0f961b850d8ede49ac11ad9114669bf2e33ae3825f609ded",
+      "constructorArguments": [
+        "0x9a21c75aC263cC43125E70200636f6397f8776d0",
+        "0xEf7684268f13BC06CB02755642CeAbEf422b8B70",
+        "0x9a21c75aC263cC43125E70200636f6397f8776d0"
+      ],
+      "status": "legacy",
+      "sourcify": "https://sourcify.dev/server/v2/contract/4663/0x2c84cfcd8d283ef750e09fbed735d67f67845db2",
+      "note": "Earlier factory. Creator fee cap 200 bps (2%). Existing launches stay live and are still listed.",
+      "abiFile": "same ABI as the current contract of the same name"
+    },
+    "PolydashLaunch": {
+      "source": "src/PolydashLaunch.sol",
+      "address": "0xef7684268f13bc06cb02755642ceabef422b8b70",
+      "deployTx": "0x60a54314fdade940734d8e999bc9b846f82cf155ecb8d65197d79f50b5485ff0",
+      "constructorArguments": [],
+      "note": "Implementation contract; each launch is an EIP-1167 clone of this address.",
+      "status": "legacy",
+      "sourcify": "https://sourcify.dev/server/v2/contract/4663/0xef7684268f13bc06cb02755642ceabef422b8b70",
+      "abiFile": "same ABI as the current contract of the same name"
+    },
+    "PolydashHook": {
+      "source": "src/PolydashHook.sol",
+      "address": "0x04990e6671c98e1b43034e52366af11396d960cc",
+      "deployTx": "0xcfc039ca3454373f97fc2e476ce643f20167527fd87c0679f61fc4d9ffa76fd8",
+      "constructorArguments": [
+        "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+        "0x2C84cFCD8d283EF750E09Fbed735d67F67845dB2"
+      ],
+      "status": "legacy",
+      "sourcify": "https://sourcify.dev/server/v2/contract/4663/0x04990e6671c98e1b43034e52366af11396d960cc",
+      "abiFile": "same ABI as the current contract of the same name"
     }
   }
 }

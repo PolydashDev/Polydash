@@ -84,10 +84,15 @@ contract FeesTest is BaseTest {
         assertEq(l.currentBuyFeeBps(), 120);
     }
 
-    function test_CreatorFeeAbove200Reverts() public {
+    function test_CreatorFeeAbove500Reverts() public {
         vm.expectRevert(PolydashFactory.InvalidParams.selector);
         vm.prank(creator);
-        factory.createLaunch(_params(201, 0, 0));
+        factory.createLaunch(_params(501, 0, 0));
+    }
+
+    function test_CreatorFeeAt500Succeeds() public {
+        vm.prank(creator);
+        factory.createLaunch(_params(500, 0, 0));
     }
 
     function test_CollectPlatformFeesGoesToWallet() public {
