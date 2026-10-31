@@ -14,7 +14,7 @@ contract FeeFuzzTest is BaseTest {
 
     function testFuzz_SplitComponentsExact(uint256 gross, uint256 creatorBps, uint256 taxBps) public pure {
         gross = bound(gross, 0, 1e30);
-        creatorBps = bound(creatorBps, 0, 200);
+        creatorBps = bound(creatorBps, 0, 500);
         taxBps = bound(taxBps, 0, 2000);
         FeeMath.Fees memory f = FeeMath.split(gross, creatorBps, taxBps);
         assertEq(f.platform, gross * 20 / 10_000);
@@ -33,7 +33,7 @@ contract FeeFuzzTest is BaseTest {
     }
 
     function testFuzz_CurveBuyPlatformFeeExactly20Bps(uint256 ethIn, uint256 creatorBps) public {
-        creatorBps = bound(creatorBps, 0, 200);
+        creatorBps = bound(creatorBps, 0, 500);
         ethIn = bound(ethIn, 0.0001 ether, 14 ether);
         (PolydashLaunch l,) = _launch(creatorBps);
         _buy(l, alice, ethIn);
@@ -43,7 +43,7 @@ contract FeeFuzzTest is BaseTest {
     }
 
     function testFuzz_CurveSellPlatformFeeExactly20Bps(uint256 ethIn, uint256 frac, uint256 creatorBps) public {
-        creatorBps = bound(creatorBps, 0, 200);
+        creatorBps = bound(creatorBps, 0, 500);
         ethIn = bound(ethIn, 0.01 ether, 10 ether);
         frac = bound(frac, 1, 100);
         (PolydashLaunch l, PolydashToken t) = _launch(creatorBps);
@@ -59,8 +59,8 @@ contract FeeFuzzTest is BaseTest {
         assertEq(l.creatorFeesAccrued() - c0, gross * creatorBps / 10_000);
     }
 
-    function testFuzz_CreatorFeeAbove200AlwaysReverts(uint256 creatorBps) public {
-        creatorBps = bound(creatorBps, 201, type(uint128).max);
+    function testFuzz_CreatorFeeAbove500AlwaysReverts(uint256 creatorBps) public {
+        creatorBps = bound(creatorBps, 501, type(uint128).max);
         vm.prank(creator);
         vm.expectRevert();
         factory.createLaunch(_params(creatorBps, 0, 0));

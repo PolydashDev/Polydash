@@ -106,7 +106,7 @@ contract LaunchInvariantTest is BaseTest {
     }
 
     function invariant_CreatorFeeBounded() public view {
-        assertLe(l.creatorFeeBps(), 200);
+        assertLe(l.creatorFeeBps(), 500);
         assertEq(l.creatorFeeBps(), 150);
     }
 

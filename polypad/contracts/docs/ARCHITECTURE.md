@@ -73,7 +73,7 @@ All fees are taken **in ETH**, computed on the gross ETH amount, each component 
 | Fee | Rate | Where it goes |
 |---|---|---|
 | Platform | **20 bps, hard-coded** (no setter anywhere) | `platformFeesAccrued` → factory → platform fee wallet (minus optional buyback share) |
-| Creator | 0–200 bps, chosen at launch, immutable | `creatorFeesAccrued` → only ever `creatorPayoutWallet` |
+| Creator | 0–500 bps, chosen at launch, immutable | `creatorFeesAccrued` → only ever `creatorPayoutWallet` |
 | Anti-sniper surplus | decays linearly from `antiSniperFeeBps − creatorFeeBps` to 0 over `antiSniperFeeDuration` (public buys only) | **nobody** — added to the permanently locked graduation liquidity |
 | Post-graduation sell spike (optional, ≤10%, ≤1h) | sells only, decays to 0 at `sellSpikeEnd` | donated to the locked V4 pool liquidity |
 
@@ -88,7 +88,7 @@ Anti-sniper wallet cap: for the first `antiSniperCapBlocks` blocks of trading, a
                      ┌────────▼────────┐                       ┌─────────▼────────┐
                      │ PolydashLaunch  │                       │  PolydashHook    │
                      │ platform 0.20%  │                       │ platform 0.20%   │
-                     │ creator 0–2%    │                       │ creator 0–2%     │
+                     │ creator 0–5%    │                       │ creator 0–5%     │
                      │ sniper surplus ─┼──► graduation LP      │ sell spike ──────┼──► donate to locked LP
                      └──┬──────────┬───┘                       └──┬───────────┬───┘
      claimCreatorFees() │          │ collectPlatformFees()       │           │

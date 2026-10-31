@@ -62,7 +62,7 @@ contract PolydashFactory is Ownable2Step, ReentrancyGuard {
         string imageUri;
         string description;
         string[] socialLinks;
-        uint256 creatorFeeBps; // 0..200, literal (0 means 0%). UIs should default to DEFAULT_CREATOR_FEE_BPS.
+        uint256 creatorFeeBps; // 0..500, literal (0 means 0%). UIs should default to DEFAULT_CREATOR_FEE_BPS.
         address creatorPayoutWallet; // 0 => msg.sender
         uint256 devBuyEth; // must equal msg.value
         uint256 totalSupply; // 0 => DEFAULT_TOTAL_SUPPLY

@@ -20,7 +20,7 @@ import {IPolydashHook} from "./interfaces/IPolydash.sol";
 ///
 /// Fees on every curve trade (all in ETH, all computed on the gross ETH amount):
 ///   - platform: exactly 20 bps (hard-coded, FeeMath.PLATFORM_FEE_BPS)
-///   - creator : creatorFeeBps, fixed at launch, 0..200 bps
+///   - creator : creatorFeeBps, fixed at launch, 0..500 bps
 ///   - anti-sniper surplus (public buys only, first minutes of trading): decays to 0, is NOT paid to anyone -
 ///     it is added to the permanently locked graduation liquidity.
 ///

@@ -2,7 +2,7 @@
 
 Fair-launch token launchpad for **Robinhood Chain** (Arbitrum Orbit L2, chain id `4663`).
 Tokens trade on a constant-product bonding curve, then graduate **atomically** into a Uniswap V4 pool whose liquidity is
-**locked forever** by the Polydash hook. Creators earn a fee (0–2%) on every trade — before and after graduation —
+**locked forever** by the Polydash hook. Creators earn a fee (0–5%) on every trade — before and after graduation —
 that only they can ever receive.
 
 > ⚠️ **Status: testnet only.** Not audited. Mainnet deployment is hard-blocked in `script/Deploy.s.sol` and requires a
@@ -71,14 +71,14 @@ cast send $SALE_ADDR "claimCreatorFees()" --rpc-url arbitrum_sepolia --private-k
 | `BuybackRouter` | Optional: platform-fee share → $POLYDASH (V3, TWAP-protected) → Trading Rewards pool. Off by default. |
 
 Key numbers: 1B default supply, 80% on the curve / 20% LP reserve, 1.5 ETH virtual reserve, graduation at 15 ETH raised
-(or a market-cap target), **platform fee 0.2% hard-coded**, creator fee 0–2% fixed per launch.
+(or a market-cap target), **platform fee 0.2% hard-coded**, creator fee 0–5% fixed per launch.
 
 ### Fee flow
 
 ```
  Trader ──ETH──► PolydashLaunch (curve)              Trader ──ETH──► Uniswap V4 pool ──► PolydashHook
                  │ 0.20% platform                                                      │ 0.20% platform
-                 │ 0–2%  creator                                                       │ 0–2%  creator
+                 │ 0–5%  creator                                                       │ 0–5%  creator
                  │ anti-sniper surplus ──► locked LP at graduation                     │ sell spike (opt.) ──► locked LP
                  │                                                                     │
    creator ◄─────┤ claimCreatorFees() ─────────────────────── creator ◄────────────────┤ (same claim call)
